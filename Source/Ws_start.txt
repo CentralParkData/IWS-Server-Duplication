@@ -1,0 +1,73 @@
+**FREE
+ctl-opt option (*srcstmt : *nodebugio : *nounref);
+ctl-opt debug (*input);
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//  Program : Ws_start
+//  Author  : Mike Larsen
+//  Date Written: 01/20/2018
+//  Purpose : This program will start a Web Service on a Web Server.
+//
+//====================================================================*
+//   Date    Programmer  Description                                  *
+//--------------------------------------------------------------------*
+// 01/20/18  M.Larsen    Original code.                               *
+//                                                                    *
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
+
+// - - - -
+// Workfields
+
+dcl-s CmdStr Char(3000);
+
+// - - - -
+// Prototypes (entry parameters)
+
+dcl-pr Ws_start ExtPgm;
+       ServerName Char(10);
+       Service    Char(10);
+End-pr;
+
+// - - - -
+// Main procedure interface
+
+dcl-pi Ws_start;
+       ServerName Char(10);
+       Service    Char(10);
+End-pi;
+
+// - - - -
+//Run CL Command
+
+dcl-pr Run ExtPgm('QCMDEXC');
+       CmdStr  Char(3000) Options(*VarSize);
+       CmdLen  Packed(15:5) Const;
+       CmdDbcs Char(2) Const Options(*Nopass);
+End-pr;
+
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+ Exsr StartService;
+
+ *Inlr = *On;
+ Return;
+
+ //--------------------------------------------------------
+ // StartService subroutine
+ //--------------------------------------------------------
+
+ Begsr StartService;
+
+   CmdStr = *Blanks;
+
+   // Run a shell script to start a Web Service
+
+   CmdStr = 'Qsh Cmd(''/QIBM/ProdData/OS/WebServices/bin/+
+            startWebService.sh -server ' +
+            %Trim(ServerName) + ' -service ' +
+            %Trim(Service) + ''')';
+
+   Callp Run(Cmdstr:%Size(CmdStr));
+
+ Endsr;
+
+//-------------------------------------------------------- 

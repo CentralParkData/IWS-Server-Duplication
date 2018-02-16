@@ -1,0 +1,14 @@
+     A*---------------------------------------------------------------*
+     A* File Name: Ws_srvce                                           *
+     A* Date Written: 01/14/18                                        *
+     A* Author: Mike Larsen                                           *
+     A* Purpose: Web server services listing.                         *
+     A*                                                               *
+     A*===============================================================*
+     A*   Date    Programmer  Description                             *
+     A*---------------------------------------------------------------*
+     A*  01/14/18 M.Larsen    Original Code                           *
+     A*---------------------------------------------------------------*
+     A          R WS_SRVCER                 TEXT('Web Service services')
+     A            SERVICE      100
+ 
