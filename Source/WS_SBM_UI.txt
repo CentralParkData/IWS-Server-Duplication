@@ -1,0 +1,115 @@
+     A*%%TS  SD  20161031  172145  MISMLARS    REL-V7R1M0  5770-WDS
+     A*---------------------------------------------------------------*
+     A* Member Name: Ws_sbm_ui                                        *
+     A* Date Written: 10/26/2016                                      *
+     A* Author: Mike Larsen                                           *
+     A* Purpose: Get parameters for the Web Service they want to move *
+     A*          to another server.                                   *
+     A*                                                               *
+     A*===============================================================*
+     A*   Date    Programmer  Description                             *
+     A*---------------------------------------------------------------*
+     A* 10/26/16  M.Larsen    Original code.                          *
+     A*                                                               *
+     A*---------------------------------------------------------------*
+     A*%%EC
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      PRINT
+     A                                      HELP
+     A                                      INDARA
+     A                                      CF03(03 'Exit')
+     A                                      CF06(06 'Submit')
+     A*
+     A* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     A*
+     A          R SCREEN1
+     A*%%TS  SD  20161031  172145  MISMLARS    REL-V7R1M0  5770-WDS
+     A                                  2  2'Ws_sbm_ui Ws_sbm_pgm'
+     A                                  2 33'Tiffany & Co.'
+     A                                  2 64DATE
+     A                                      EDTCDE(Y)
+     A                                  2 73TIME
+     A                                  3  2'User'
+     A            DSUSER        10A  O  3  7
+     A                                  3 64'Wrkstn'
+     A            DSWKST        10A  O  3 71
+     A                                 22  2'==================================-
+     A                                      ===================================-
+     A                                      ========='
+     A                                      COLOR(BLU)
+     A**          FNCBTN         2Y 0B 23  2PSHBTNFLD((*GUTTER 2))
+     A**                                    PSHBTNCHC(1 &FK3 CF03)
+     A**          FK3            8A  P      TEXT('Function Key F3')
+     A**          ENTBTN         2Y 0B 19 23PSHBTNFLD((*GUTTER 2))
+     A**                                    PSHBTNCHC(2 &FKENT)
+     A**          FKENT          8A  P      TEXT('Validate Key')
+     A**41        SBMBTN         2Y 0B 19 42PSHBTNFLD((*GUTTER 2))
+     A**                                    PSHBTNCHC(3 &FKSBM)
+     A**          FKSBM          6A  P      TEXT('Submit Key')
+     A**          BLANK          1A  I 19 35DSPATR(ND)
+     A**          BLANK2         1A  I 19 55DSPATR(ND)
+     A                                 23  2'F3=Exit'
+     A                                      COLOR(WHT)
+     A                                 23 11'F6=Validate'
+     A                                      COLOR(WHT)
+     A  41                             23 24'Enter=Submit'
+     A  41                                  COLOR(WHT)
+     A                                  3 30'Promote Web Service'
+     A                                  5  3'IBM i'
+     A                                      DSPATR(UL)
+     A                                  6  9'Source:'
+     A                                  7  4'Destination:'
+     A            IBMISRC       10A  B  6 18
+     A  30                                  DSPATR(RI)
+     A            IBMIDEST      10A  B  7 18
+     A  31                                  DSPATR(RI)
+     A                                  9  3'Web Server'
+     A                                      DSPATR(UL)
+     A                                 10  9'Source:'
+     A                                 11  4'Destination:'
+     A            SERVERSRC     20A  B 10 18
+     A  32                                  DSPATR(RI)
+     A            SERVERDEST    20A  B 11 18
+     A  33                                  DSPATR(RI)
+     A                                 17  3'Service name:'
+     A                                      DSPATR(UL)
+     A            SERVICENME    20A  B 17 18
+     A  34                                  DSPATR(RI)
+     A                                 13  3'Service program object'
+     A                                      DSPATR(UL)
+     A                                 14  4'Object name:'
+     A                                 15  3'Library name:'
+     A                                  5 53'Property file info'
+     A                                      DSPATR(UL)
+     A                                  6 56'File name:'
+     A                                  7 53'Library name:'
+     A            SERVICEPGM    10A  B 14 18
+     A  35                                  DSPATR(RI)
+     A            SERVICELIB    10A  B 15 18
+     A  36                                  DSPATR(RI)
+     A            LOGFILE       10A  B  6 67
+     A  37                                  DSPATR(RI)
+     A            LOGFILELIB    10A  B  7 67
+     A  38                                  DSPATR(RI)
+     A            MESSAGE       75A  O 21  3DSPATR(HI)
+     A            SVCEXISTS     38A  O 17 39DSPATR(HI)
+     A  40                             18  2'Library list:'
+     A                                      DSPATR(UL)
+     A  40        LIB_LIST      59A  B 18 18
+     A  41        LIBLISTMSG    59A  O 19 18DSPATR(HI)
+     A                                  9 53'Web server file'
+     A                                      DSPATR(UL)
+     A                                 10 56'File name:'
+     A                                 11 53'Library name:'
+     A            SERVERFILE    10A  B 10 67
+     A  42                                  DSPATR(RI)
+     A            SVRFILELIB    10A  B 11 67
+     A  43                                  DSPATR(RI)
+     A                                 13 53'Web Service file'
+     A                                      DSPATR(UL)
+     A                                 14 56'File name:'
+     A                                 15 53'Library name:'
+     A            SVCFILE       10A  B 14 67
+     A  44                                  DSPATR(RI)
+     A            SVCFILELIB    10A  B 15 67
+     A  45                                  DSPATR(RI)
