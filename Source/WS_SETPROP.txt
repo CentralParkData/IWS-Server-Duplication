@@ -1,0 +1,331 @@
+**FREE
+ctl-opt option (*srcstmt : *nodebugio : *nounref);
+ctl-opt debug (*input);
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//  Program : Ws_SetProp
+//  Author  : Mike Larsen
+//  Date Written: 10/25/2016
+//  Purpose : This program will set properties on a Web Service.
+//
+//====================================================================*
+//   Date    Programmer  Description                                  *
+//--------------------------------------------------------------------*
+// 10/25/16  M.Larsen    Original code.                               *
+//                                                                    *
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
+dcl-f Ws_props Disk Usage(*input);
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Program status data structure
+//
+dcl-ds PSDS;
+  Program     char(10) pos(1);
+  WorkStation char(10) pos(244);
+  User        char(10) pos(254);
+end-ds;
+
+//- - - - - - - - - - - - - - - - - - - - - -
+// Variables to hold Web Service properties
+dcl-s  Name           char(20);
+dcl-s  Description    char(20);
+dcl-s  StartUpType    char(20);
+dcl-s  Status         char(20);
+dcl-s  RuntimeUid     char(20);
+dcl-s  InstallPath    char(150);
+dcl-s  PgmObjectPath  char(150);
+dcl-s  PcmlFilePath   char(150);
+dcl-s  WsdlTargetUri  char(20);
+dcl-s  WsdlFilePath   char(20);
+dcl-s  WsdlGenTime    char(10);
+dcl-s  WsdlModTime    char(10);
+dcl-s  Operations     char(250);
+dcl-s  LibraryList    char(150);
+dcl-s  LibraryListPos char(10);
+dcl-s  DefaultCcsid   char(10);
+dcl-s  UseMaintThread char(10);
+dcl-s  CleanUpIntrval char(10);
+dcl-s  MaxConnections char(10);
+dcl-s  MaxInactivity  char(10);
+dcl-s  MaxLifetime    char(10);
+dcl-s  MaxUseCount    char(10);
+dcl-s  MaxUseTime     char(10);
+dcl-s  TransMetaData  char(150);
+dcl-s  TransHeaders   char(150);
+// - - - - - - -
+// Workfields
+dcl-s  TextPosition  zoned(3:0);
+dcl-s  ServiceType   char(10);
+dcl-s  LibListToUse  char(20);
+dcl-s  CmdStr        char(3000);
+
+// Prototypes (entry parameters)
+dcl-pr Ws_SetProp ExtPgm;
+    ServerName    Char(20);
+    Service       Char(20);
+    LibList       Char(20);
+End-pr;
+
+// Main procedure interface
+dcl-pi Ws_SetProp;
+    ServerName    Char(20);
+    Service       Char(20);
+    LibList       Char(20);
+End-pi;
+
+// - - - -
+//Run CL Command
+dcl-pr Run ExtPgm('QCMDEXC');
+    CmdStr  Char(3000) Options(*VarSize);
+    CmdLen  Packed(15:5) Const;
+    CmdDbcs Char(2) Const Options(*Nopass);
+End-pr;
+
+     // Read through the Web Services properties file.
+
+    Read Ws_props;
+
+    Dow Not %Eof(Ws_props);
+
+    Exsr GetProperties;
+
+    Read Ws_props;
+
+    Enddo;
+
+     Exsr SetProperties;
+
+     *Inlr = *On;
+     Return;
+
+//--------------------------------------------------------
+// GetProperties subroutine
+//--------------------------------------------------------
+Begsr GetProperties;
+
+    // get name
+    TextPosition = %Scan('Name:':Text);
+
+     If TextPosition > 0;
+        Name = %Trim(%Subst(Text:6));
+     Endif;
+
+    // get description
+    TextPosition = %Scan('Description:':Text);
+
+    If TextPosition > 0;
+       Description = %Trim(%Subst(Text:13));
+    Endif;
+
+    // get start up type
+    TextPosition = %Scan('Startup type:':Text);
+
+    If TextPosition > 0;
+       StartUpType = %Trim(%Subst(Text:14));
+    Endif;
+
+    // get status
+    TextPosition = %Scan('Status:':Text);
+
+    If TextPosition > 0;
+       Status = %Trim(%Subst(Text:8));
+    Endif;
+
+    // get runtime user id
+    TextPosition = %Scan('Runtime user ID:':Text);
+
+    If TextPosition > 0;
+       RuntimeUid = %Trim(%Subst(Text:17));
+    Endif;
+
+    // get install path
+    TextPosition = %Scan('Install path:':Text);
+
+    If TextPosition > 0;
+       InstallPath = %Trim(%Subst(Text:14));
+    Endif;
+
+    // get program object path
+    TextPosition = %Scan('Program object path:':Text);
+
+    If TextPosition > 0;
+       PgmObjectPath = %Trim(%Subst(Text:21));
+    Endif;
+
+    // get pcml file path
+    TextPosition = %Scan('PCML file path:':Text);
+
+    If TextPosition > 0;
+       PcmlFilePath = %Trim(%Subst(Text:16));
+    Endif;
+
+    // get Wsdl target namespace Uri
+    TextPosition = %Scan('WSDL target namespace URI:':Text);
+
+    If TextPosition > 0;
+       WsdlTargetUri = %Trim(%Subst(Text:27));
+    Endif;
+
+    // get Wsdl file path
+    TextPosition = %Scan('WSDL file path:':Text);
+
+    If TextPosition > 0;
+       WsdlFilePath = %Trim(%Subst(Text:16));
+    Endif;
+
+    // get Wsdl file generation time
+    TextPosition = %Scan('WSDL file generation time:':Text);
+
+    If TextPosition > 0;
+       WsdlGenTime = %Trim(%Subst(Text:27));
+    Endif;
+
+    // get Wsdl file modification time
+    TextPosition = %Scan('WSDL file modification time:':Text);
+
+    If TextPosition > 0;
+       WsdlModTime = %Trim(%Subst(Text:29));
+    Endif;
+
+    // get Operations
+    TextPosition = %Scan('Operations:':Text);
+
+    If TextPosition > 0;
+       Operations = %Trim(%Subst(Text:12));
+    Endif;
+
+    // get Library list.  the library list is given to us with a
+    // semi-colon separator when we use it from the properties file,
+    // but we need to send it with a colon separator when we install
+    // a Web Service.  We need to change it. If they send us a
+    // library list as a parm, use that instead of what u get from
+    // the properties file.
+
+    TextPosition = %Scan('Library list:':Text);
+
+    If TextPosition > 0;
+       LibraryList = %Trim(%Subst(Text:14));
+    Endif;
+
+    If LibraryList <> *Blanks;
+       LibraryList = %ScanRpl(';' : ':' : LibraryList);
+    Endif;
+
+    If LibList <> *Blanks;
+       LibList = %ScanRpl(';' : ':' : LibList);
+    Endif;
+
+    If LibList <> *Blanks;
+       LibListToUse = LibList;
+    Else;
+       LibListToUse = LibraryList;
+    Endif;
+
+    // get Library list position
+    TextPosition = %Scan('Library list position:':Text);
+
+    If TextPosition > 0;
+       LibraryListPos = %Trim(%Subst(Text:23));
+    Endif;
+
+    // get Default Ccsid
+    TextPosition = %Scan('Default CCSID:':Text);
+
+    If TextPosition > 0;
+       DefaultCcsid = %Trim(%Subst(Text:17));
+    Endif;
+
+    // get Use maintenance threads
+    TextPosition = %Scan('Use maintenance threads:':Text);
+
+    If TextPosition > 0;
+       UseMaintThread = %Trim(%Subst(Text:27));
+    Endif;
+
+    // get Cleanup interval (seconds)
+    TextPosition = %Scan('Cleanup interval (seconds):':Text);
+
+    If TextPosition > 0;
+       CleanUpIntrval = %Trim(%Subst(Text:30));
+    Endif;
+
+    // get Maximum number of connections
+    TextPosition = %Scan('Maximum number of connections:':Text);
+
+    If TextPosition > 0;
+       MaxConnections = %Trim(%Subst(Text:33));
+    Endif;
+
+    // get Maximum inactivity time (seconds)
+    TextPosition = %Scan('Maximum inactivity time (seconds):':Text);
+
+    If TextPosition > 0;
+       MaxInactivity = %Trim(%Subst(Text:37));
+    Endif;
+
+    // get Maximum life time (seconds)
+    TextPosition = %Scan('Maximum life time (seconds):':Text);
+
+    If TextPosition > 0;
+       MaxLifetime = %Trim(%Subst(Text:31));
+    Endif;
+
+    // get Maximum use count
+    TextPosition = %Scan('Maximum use count:':Text);
+
+    If TextPosition > 0;
+       MaxUseCount = %Trim(%Subst(Text:21));
+    Endif;
+
+    // get Maximum use time (seconds)
+    TextPosition = %Scan('Maximum use time (seconds):':Text);
+
+    If TextPosition > 0;
+       MaxUseTime = %Trim(%Subst(Text:30));
+    Endif;
+
+    // get Transport metadata
+    TextPosition = %Scan('Transport metadata:':Text);
+
+    If TextPosition > 0;
+       TransMetaData = %Trim(%Subst(Text:20));
+    Endif;
+
+    // get Transport headers
+    TextPosition = %Scan('Transport headers:':Text);
+
+    If TextPosition > 0;
+       TransHeaders = %Trim(%Subst(Text:19));
+    Endif;
+
+    // Service type isn't given to us when we retreive the
+    // properties, so we have to figure it out.
+
+    If WsdlTargetUri = 'null';
+       ServiceType = '*REST';
+    Else;
+       ServiceType = '*SOAP12';
+    Endif;
+
+Endsr;
+
+//--------------------------------------------------------
+// SetProperties subroutine
+//--------------------------------------------------------
+Begsr SetProperties;
+    CmdStr = *Blanks;
+
+    // Run a shell script to set properties on a Web Service
+
+    CmdStr = 'Qsh Cmd(''/QIBM/ProdData/OS/WebServices/bin/+
+             setWebServiceProperties.sh' +
+             ' -server ' + %Trim(ServerName) +
+             ' -service ' + %Trim(Service) +
+             ' -transportMetadata ' + %Trim(TransMetaData) +
+             ' -transportHeaders ' + %Trim(TransHeaders) +
+             ' -libraryList ' + %Trim(LibListToUse) +
+             ''')';
+
+    Callp Run(Cmdstr:%Size(CmdStr));
+
+Endsr;
+
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
