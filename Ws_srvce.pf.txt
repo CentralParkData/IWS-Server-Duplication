@@ -1,0 +1,20 @@
+     A*---------------------------------------------------------------*
+     A* File Name: Ws_srvce                                           *
+     A* Date Written: 01/14/18                                        *
+     A* Author: Mike Larsen                                           *
+     A* Purpose: Web server services listing.                         *
+     A*                                                               *
+     A* Copyright (c) Central Park Data Systems, Inc. All rights      *  
+     A* reserved.                                                     *
+     A*                                                               *
+     A* Licensed under the Source EULA. See License.txt in the        *
+     A* project root for license information.                         *
+     A*                                                               *
+     A*===============================================================*
+     A*   Date    Programmer  Description                             *
+     A*---------------------------------------------------------------*
+     A*  01/14/18 M.Larsen    Original Code                           *
+     A*---------------------------------------------------------------*
+     A          R WS_SRVCER                 TEXT('Web Service services')
+     A            SERVICE      100
+ 
